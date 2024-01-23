@@ -449,6 +449,16 @@ public class AST {
 				PLXC.out.println("\tif (" + left + " == " + right + ") goto " + v + ";");
 				PLXC.out.println("\tgoto " + f + ";");
 				break;
+			case "bool":
+				left = izq.gc();
+				if (!TablaSimbolos.estaIdent(left)){
+					TablaSimbolos.insertar(left, TablaSimbolos.Tipo.BOOLEAN);
+				}
+				v = Generador.nuevaEtiqueta();
+				f = Generador.nuevaEtiqueta();
+				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
+				PLXC.out.println("\tgoto " + f + ";");
+				break;
 			case "else":
 				String l = Generador.nuevaEtiqueta();
 				izq.gc();
@@ -535,6 +545,17 @@ public class AST {
 				left = izq.gc();
 				TablaSimbolos.insertar(left, TablaSimbolos.Tipo.STRING);
 				break;
+			case "boolean":
+				left = izq.gc();
+				TablaSimbolos.insertar(left, TablaSimbolos.Tipo.BOOLEAN);
+				break;
+			case "boolIdent":
+				right = der.raiz;
+				TablaSimbolos.insertar(der.raiz, TablaSimbolos.Tipo.BOOLEAN);
+				if (izq != null){
+					izq.gc();
+				}
+				break;
 			case "floatIdent":
 				TablaSimbolos.insertar(der.raiz, TablaSimbolos.Tipo.FLOAT);
 				if (izq != null){
@@ -611,6 +632,16 @@ public class AST {
 				if(izq != null){
 					izq.gc();
 				}
+				break;
+			case "asigBool":
+				right = der.raiz;
+				left = izq.raiz;
+				if(right.equals("true")){
+					right = "1";
+				}else{
+					right = "0";
+				}
+				PLXC.out.println("\t" + left + " = " + right + ";");				
 				break;
 			case "intIdent":
 				TablaSimbolos.insertar(der.raiz, TablaSimbolos.Tipo.INT);

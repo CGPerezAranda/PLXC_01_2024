@@ -7,7 +7,7 @@ public class TablaSimbolos {
 	public final static String ERROR_DECLARADA = "ERROR7: Esta variable ya ha sido declarada";
 
 	public enum Tipo {
-		CHAR, INT, FLOAT, STRING, ARRAY_CHAR, ARRAY_INT, ARRAY_FLOAT, ARRAY_STRING, ARRAY_CHAR_2D, ARRAY_INT_2D, ARRAY_STRING_2D
+		CHAR, INT, FLOAT, STRING, BOOLEAN, ARRAY_CHAR, ARRAY_INT, ARRAY_FLOAT, ARRAY_STRING, ARRAY_CHAR_2D, ARRAY_INT_2D, ARRAY_STRING_2D
 	}
 	//Hashmap que guarda los identificadores y sus tipos de las variables declaradas.
 	public static HashMap<String, Tipo> tablaTipos = new HashMap<String, Tipo>();

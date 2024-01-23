@@ -1,0 +1,19 @@
+	p = 1;
+	q = 0;
+	if ( 1 == p) goto L0;
+	goto L1;
+L0:
+	print 1;
+	if ( 1 == q) goto L3;
+	goto L4;
+L3:
+	print 2;
+	goto L5;
+L4:
+	print 3;
+L5:
+	goto L2;
+L1:
+	print 4;
+L2:
+	print 5;

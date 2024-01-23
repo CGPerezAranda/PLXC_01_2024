@@ -44,11 +44,14 @@ import java_cup.runtime.*;
     "char"              { return new Symbol(sym.CHAR); }
     "float"             { return new Symbol(sym.FLOAT); }
     "string"            { return new Symbol(sym.STRING); }
+    "boolean"           { return new Symbol(sym.BOOLEAN); }
     ","                 { return new Symbol(sym.COMA); }
     "(char)"            { return new Symbol(sym.CASTCHAR); }
     "(int)"             { return new Symbol(sym.CASTINT); }
     "(float)"           { return new Symbol(sym.CASTFLOAT); }
     ".length"           { return new Symbol(sym.LENGTH); }	
+    "true"|"false"      { return new Symbol(sym.TRUE, new String(yytext())); }
+    
 
     [A-Za-z][A-Za-z0-9_]* { return new Symbol(sym.IDENT, new String( yytext() )); }    
     0|[1-9][0-9]*      { return new Symbol(sym.NUM, new String(yytext()) ); }
