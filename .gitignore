@@ -25,5 +25,5 @@ replay_pid*
 
 
 # aplicaciones compiladas
-ctd
-plxc
+ctd.app
+plxc.app
