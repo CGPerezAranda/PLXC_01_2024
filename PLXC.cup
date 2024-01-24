@@ -54,7 +54,7 @@ sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
 			|	exp:e PYC							{: RESULT = e; :}
 			|	ALL listaSent:e CLL					{: RESULT = e; :}
 			|	IF AP cond:c CP elseSent:e			{: RESULT = new AST("if", c, e); :}
-			|   IF AP IDENT:i CP                    {: RESULT = new AST("if", new AST("bool", new AST(i, null, null), null), null); :}
+			|   IF AP IDENT:i CP elseSent:e         {: RESULT = new AST("if", new AST("bool", new AST(i, null, null), null), e); :}
 			|	DO sent:s WHILE AP cond:c CP PYC	{: RESULT = new AST("doWhile",c,s); :}
 			|	WHILE AP cond:c CP sent:s			{: RESULT = new AST("while",c,s);  :}	
 			|	FOR AP expFor:e CP sent:s			{: RESULT = new AST("for", e, s);  :} 	
@@ -89,7 +89,7 @@ exp			::=	NUM:n									{: RESULT = new AST("num", new AST(n, null, null), null 
 			|	MENOS exp:e								{: RESULT = new AST("menosUnario", e, null); :}		%prec MENOSUNARIO
 			|	IDENT:i ASIG exp:e 						{: RESULT = new AST("asig", new AST(i, null, null), e); :}
 			|	IDENT:i ASIG TRUE:t						{: RESULT = new AST("asigBool", new AST(i, null, null), new AST(t, null, null)); :}	
-			|	IDENT:i ASIG cond:c1					{: RESULT = new AST("asigBool", new AST(i, null, null), c1); :}
+			|	IDENT:i ASIG cond:c						{: RESULT = new AST("asigBool", new AST(i, null, null), c); :}
 			|	IDENT:i AC exp:e CC						{: RESULT = new AST("arrayPos", new AST(i, null, null), e); :}
 			|   IDENT:i AC NUM:n CC ASIG exp:e			{: RESULT = new AST("arrayAsig", new AST(i, new AST(n, null, null), null), e); :}
 			|	IDENT:i AC exp:e1 CC ASIG exp:e2		{: RESULT = new AST("arrayAsig", new AST(i, e1, null), e2); :}

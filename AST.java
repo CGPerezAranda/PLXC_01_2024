@@ -437,9 +437,11 @@ public class AST {
 			case "if":
 				izq.gc();
 				PLXC.out.println( izq.v + ":");
-				der.v = izq.v;
-				der.f = izq.f;
-				der.gc();
+				if (der != null){
+					der.v = izq.v;
+					der.f = izq.f;
+					der.gc();
+				}				
 				break;
 			case "igual":
 				left = izq.gc();
@@ -451,6 +453,9 @@ public class AST {
 				break;
 			case "bool":
 				left = izq.gc();
+				if (left == null || left.equals("")){
+					left = izq.raiz;
+				}				
 				if (!TablaSimbolos.estaIdent(left)){
 					TablaSimbolos.insertar(left, TablaSimbolos.Tipo.BOOLEAN);
 				}
@@ -458,6 +463,7 @@ public class AST {
 				f = Generador.nuevaEtiqueta();
 				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
 				PLXC.out.println("\tgoto " + f + ";");
+				
 				break;
 			case "else":
 				String l = Generador.nuevaEtiqueta();
@@ -634,15 +640,31 @@ public class AST {
 				}
 				break;
 			case "asigBool":
-				right = der.raiz;
-				left = izq.raiz;
-				if(right.equals("true")){
+				right = der.raiz; //raiz AST siguiente
+				left = izq.raiz; // identificador
+				if (!(right.equals("true") || right.equals("false"))){ // condicion
+					right = der.gc();
+					et = Generador.getPastEtiqueta(); //et si se cumple la condición
+					et1 = Generador.getCurrentEtiqueta();	//et si no se cumple la condición
+					et2 = Generador.nuevaEtiqueta(); //et final y salida
+					PLXC.out.println(et + ":");//se cumple la condicion
+					PLXC.out.println("\t" + left + " = 1;");
+					PLXC.out.println("\tgoto " + et2 + ";");
+					PLXC.out.println(et1 + ":");//no se cumple la condicion
+					PLXC.out.println("\t" + left + " = 0;");
+					PLXC.out.println(et2 + ":");
+				}else if(right.equals("true")){
 					right = "1";
+					PLXC.out.println("\t" + left + " = " + right + ";");
 				}else{
 					right = "0";
-				}
-				PLXC.out.println("\t" + left + " = " + right + ";");				
+					PLXC.out.println("\t" + left + " = " + right + ";");
+				}								
 				break;
+			case "asigBoolcond":
+				right = der.gc(); // condicion
+				left = izq.raiz; //identificador
+				PLXC.out.println("\tif (" + right + ") goto");
 			case "intIdent":
 				TablaSimbolos.insertar(der.raiz, TablaSimbolos.Tipo.INT);
 				if (izq != null){

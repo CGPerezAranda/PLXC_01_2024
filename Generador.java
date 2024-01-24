@@ -17,6 +17,16 @@ public class Generador {
         return "L" + Integer.toString(l++);
     }
 
+    public static String getCurrentEtiqueta() {
+        int aux = l-1;
+        return "L" + Integer.toString(aux);
+    }
+
+    public static String getPastEtiqueta() {
+        int aux = l-2;
+        return "L" + Integer.toString(aux);
+    }
+
     public static String getindex() {
         return Integer.toString(index++);
     }
