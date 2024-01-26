@@ -3,17 +3,45 @@
 	if ( 1 == p) goto L0;
 	goto L1;
 L0:
+	if ( 1 == q) goto L2;
+	goto L3;
+L1:
+L2:
 	print 1;
-	if ( 1 == q) goto L3;
 	goto L4;
 L3:
-	print 2;
-	goto L5;
 L4:
-	print 3;
+	if ( 1 == p) goto L5;
+	goto L6;
+L6:
+	if ( 1 == q) goto L7;
+	goto L8;
 L5:
-	goto L2;
-L1:
+L7:
+	print 2;
+	goto L9;
+L8:
+L9:
+	if ( 1 == p) goto L10;
+	goto L11;
+L10:
+	if ( 1 == q) goto L12;
+	goto L13;
+L11:
+L13:
+	print 3;
+	goto L14;
+L12:
+L14:
+	if ( 1 == p) goto L15;
+	goto L16;
+L16:
+	if ( 1 == q) goto L17;
+	goto L18;
+L15:
+L18:
 	print 4;
-L2:
+	goto L19;
+L17:
+L19:
 	print 5;

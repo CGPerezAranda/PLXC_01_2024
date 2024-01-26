@@ -462,8 +462,36 @@ public class AST {
 				v = Generador.nuevaEtiqueta();
 				f = Generador.nuevaEtiqueta();
 				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
+				PLXC.out.println("\tgoto " + f + ";");				
+				break;
+			case "booland":
+				left = izq.raiz; //identificador
+				v = Generador.nuevaEtiqueta();
+				f = Generador.nuevaEtiqueta();
+				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
 				PLXC.out.println("\tgoto " + f + ";");
-				
+				PLXC.out.println(v + ":");
+				der.gc();
+				PLXC.out.println(f+ ":");
+				v = der.v;
+				f = der.f;
+				break;
+			case "boolor":
+				left = izq.raiz; //identificador
+				v = Generador.nuevaEtiqueta();
+				f = Generador.nuevaEtiqueta();
+				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
+				PLXC.out.println("\tgoto " + f + ";");
+				PLXC.out.println(f + ":");
+				der.gc();
+				PLXC.out.println(v + ":");
+				v = der.v;
+				f = der.f;
+				break;
+			case "boolnot":
+				izq.gc();
+				v = izq.f;
+				f = izq.v;
 				break;
 			case "else":
 				String l = Generador.nuevaEtiqueta();

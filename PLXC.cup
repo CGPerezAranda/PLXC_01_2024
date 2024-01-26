@@ -24,7 +24,7 @@ terminal MENOSUNARIO;
 
 /* NOT TERMINALES */
 non terminal ini;
-non terminal AST listaSent, sent, exp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
+non terminal AST listaSent, sent, exp, boolexp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
 
 /* PRECEDENCIAS */
 precedence right ASIG;
@@ -54,11 +54,18 @@ sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
 			|	exp:e PYC							{: RESULT = e; :}
 			|	ALL listaSent:e CLL					{: RESULT = e; :}
 			|	IF AP cond:c CP elseSent:e			{: RESULT = new AST("if", c, e); :}
-			|   IF AP IDENT:i CP elseSent:e         {: RESULT = new AST("if", new AST("bool", new AST(i, null, null), null), e); :}
+			|   IF AP boolexp:b CP elseSent:e 	 	{: RESULT = new AST("if", b, e); :}
 			|	DO sent:s WHILE AP cond:c CP PYC	{: RESULT = new AST("doWhile",c,s); :}
 			|	WHILE AP cond:c CP sent:s			{: RESULT = new AST("while",c,s);  :}	
 			|	FOR AP expFor:e CP sent:s			{: RESULT = new AST("for", e, s);  :} 	
 			;
+
+boolexp     ::= IDENT:i								{: RESULT = new AST("bool", new AST(i, null, null), null); :}
+	        |  	IDENT:i AND boolexp:b				{: RESULT = new AST("booland", new AST(i, null, null), b); :}
+			|  	IDENT:i OR boolexp:b				{: RESULT = new AST("boolor", new AST(i, null, null), b); :}
+			|   NOT boolexp:b						{: RESULT = new AST("boolnot", b, null); :}
+			;
+
 			
 			
 elseSent	::=		sent:e1 ELSE sent:e2			{: RESULT = new AST("else", e1, e2); :}
