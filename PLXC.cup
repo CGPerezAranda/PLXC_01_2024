@@ -61,8 +61,8 @@ sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
 			;
 
 boolexp     ::= IDENT:i								{: RESULT = new AST("bool", new AST(i, null, null), null); :}
-	        |  	IDENT:i AND boolexp:b				{: RESULT = new AST("booland", new AST(i, null, null), b); :}
-			|  	IDENT:i OR boolexp:b				{: RESULT = new AST("boolor", new AST(i, null, null), b); :}
+	        |  	boolexp:b1 AND boolexp:b2			{: RESULT = new AST("and", b1, b2); :}
+			|  	boolexp:b1 OR boolexp:b2			{: RESULT = new AST("or", b1, b2); :}
 			|   NOT boolexp:b						{: RESULT = new AST("boolnot", b, null); :}
 			;
 

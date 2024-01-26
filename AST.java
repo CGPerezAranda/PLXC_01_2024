@@ -282,17 +282,6 @@ public class AST {
 				}else{
 					PLXC.out.println("\t$" + temp + " = " + left + " + " + right + ";" );
 				}
-				/* if (tipo == TablaSimbolos.Tipo.FLOAT || TablaSimbolos.tipo(right) == TablaSimbolos.Tipo.FLOAT){
-					tipo = TablaSimbolos.Tipo.FLOAT;
-					TablaSimbolos.setTipo(left, TablaSimbolos.Tipo.FLOAT);
-					TablaSimbolos.setTipo(right, TablaSimbolos.Tipo.FLOAT);
-					PLXC.out.println("\t$" + temp + " = "+ left + " +r " + right + ";" );
-				}else{
-					PLXC.out.println("\t$" + temp + " = " + left + " + " + right + ";" );
-				}	
-				if (tipo == TablaSimbolos.Tipo.CHAR){
-					tipo = TablaSimbolos.Tipo.INT;
-				}	 */	
 				TablaSimbolos.insertar("$" + temp, tipo);
 				res += "$" + temp;				
 				break;
@@ -329,8 +318,8 @@ public class AST {
 				if (!TablaSimbolos.estaIdent(left)){
 					Errores.noDeclarada(left);
 				}
-				if (TablaSimbolos.tipo(left) != TablaSimbolos.tipo(right) && !comprobarCasteo(left, der.raiz, right)){
-						Errores.noTipo();
+				if (TablaSimbolos.tipo(left)!= TablaSimbolos.Tipo.BOOLEAN && TablaSimbolos.tipo(left) != TablaSimbolos.tipo(right) && !comprobarCasteo(left, der.raiz, right)){
+					Errores.noTipo(); //No hace la comprobación en caso de booleano
 				} else {
 					PLXC.out.println("\t" + left + " = " + right + ";");
 				} if (!der.raiz.equals("asig")){
@@ -463,30 +452,6 @@ public class AST {
 				f = Generador.nuevaEtiqueta();
 				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
 				PLXC.out.println("\tgoto " + f + ";");				
-				break;
-			case "booland":
-				left = izq.raiz; //identificador
-				v = Generador.nuevaEtiqueta();
-				f = Generador.nuevaEtiqueta();
-				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
-				PLXC.out.println("\tgoto " + f + ";");
-				PLXC.out.println(v + ":");
-				der.gc();
-				PLXC.out.println(f+ ":");
-				v = der.v;
-				f = der.f;
-				break;
-			case "boolor":
-				left = izq.raiz; //identificador
-				v = Generador.nuevaEtiqueta();
-				f = Generador.nuevaEtiqueta();
-				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
-				PLXC.out.println("\tgoto " + f + ";");
-				PLXC.out.println(f + ":");
-				der.gc();
-				PLXC.out.println(v + ":");
-				v = der.v;
-				f = der.f;
 				break;
 			case "boolnot":
 				izq.gc();
@@ -687,7 +652,8 @@ public class AST {
 				}else{
 					right = "0";
 					PLXC.out.println("\t" + left + " = " + right + ";");
-				}								
+				}	
+				res = right;					
 				break;
 			case "asigBoolcond":
 				right = der.gc(); // condicion
@@ -849,6 +815,8 @@ public class AST {
 				result = true;
 			}
 		}else if(TablaSimbolos.tipo(left) == TablaSimbolos.Tipo.FLOAT && TablaSimbolos.tipo(derecha) == TablaSimbolos.Tipo.INT){
+			result = true;
+		}else if(TablaSimbolos.tipo(left) == TablaSimbolos.Tipo.BOOLEAN){
 			result = true;
 		}
 		return result;

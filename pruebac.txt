@@ -12,20 +12,16 @@ L3:
 L4:
    q = 0;
 L5:
-   if (1 == p) goto L6;
+   if (0 < p) goto L6;
    goto L7;
+L7:
+   if (0 < q) goto L8;
+   goto L9;
 L6:
-   print 1;
-   if (1 == q) goto L9;
+   goto L9;
+L8:
+   print 4;
    goto L10;
 L9:
-   print 2;
-   goto L11;
 L10:
-   print 3;
-L11:
-   goto L8;
-L7:
-   print 4;
-L8:
    print 5;
