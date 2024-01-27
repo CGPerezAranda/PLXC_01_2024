@@ -34,6 +34,19 @@ public class AST {
 					der.gc();
 				}
 				break;
+			case "printcond":
+				izq.gc();
+				et = Generador.getPastEtiqueta(); //et si se cumple la condición
+				et1 = Generador.getCurrentEtiqueta();	//et si no se cumple la condición
+				et2 = Generador.nuevaEtiqueta(); //et final y salida
+				PLXC.out.println(et + ":");//se cumple la condicion
+				PLXC.out.println("\twritec 116;\n\twritec 114;\n\twritec 117;\n\twritec 101;\n\twritec 10;");
+				PLXC.out.println("\tgoto " + et2 + ";");
+				PLXC.out.println(et1 + ":");//no se cumple la condicion
+				PLXC.out.println("\twritec 102;\n\twritec 97;\n\twritec 108;\n\twritec 115;\n\twritec 101;\n\twritec 10;");
+				PLXC.out.println(et2 + ":");//salida
+				break;
+
 			case "print":
 				left = izq.gc();
 				if (izq.raiz.equals("cadena")){
@@ -62,6 +75,18 @@ public class AST {
 					PLXC.out.println("\tgoto " + et + ";");
 					PLXC.out.println(et2 + ":");
 					PLXC.out.println("\twritec 10;");
+				}else if (TablaSimbolos.tipo(left) == TablaSimbolos.Tipo.BOOLEAN){	
+					et = Generador.nuevaEtiqueta(); //et si se cumple la condición
+					et1 = Generador.nuevaEtiqueta();	//et si no se cumple la condición
+					et2 = Generador.nuevaEtiqueta(); //et final y salida	
+					PLXC.out.println("\tif (" + left + " == 1) goto " + et + ";");
+					PLXC.out.println("\tgoto " + et1 + ";");
+					PLXC.out.println(et + ":");//se cumple la condicion
+					PLXC.out.println("\twritec 116;\n\twritec 114;\n\twritec 117;\n\twritec 101;\n\twritec 10;");
+					PLXC.out.println("\tgoto " + et2 + ";");
+					PLXC.out.println(et1 + ":");//no se cumple la condicion
+					PLXC.out.println("\twritec 102;\n\twritec 97;\n\twritec 108;\n\twritec 115;\n\twritec 101;\n\twritec 10;");
+					PLXC.out.println(et2 + ":");//salida
 				}else{
 					aux = "print";
 					if (TablaSimbolos.tipo(left) == TablaSimbolos.Tipo.ARRAY_CHAR || izq.raiz.equals("castChar")){

@@ -50,6 +50,7 @@ listaSent	::=	listaSent:e1 sent:e2				{: RESULT = new AST("sent", e1, e2); :}
 			;
 
 sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
+			|   PRINT AP cond:c CP PYC				{: RESULT = new AST("printcond", c, null); :}
 			|	PRINT AP ALL pArrayIni:a CLL CP PYC	{: RESULT = new AST("printArray", a ,null); :}
 			|	exp:e PYC							{: RESULT = e; :}
 			|	ALL listaSent:e CLL					{: RESULT = e; :}
@@ -76,10 +77,12 @@ elseSent	::=		sent:e1 ELSE sent:e2			{: RESULT = new AST("else", e1, e2); :}
 			|	sent:e								{: RESULT = new AST("else", e, null); :}
 			;
 			
-expFor		::=		exp:e1 PYC cond:c PYC exp:e2		{: RESULT = new AST("expFor", c, new AST("aux", e1, e2)); :}
-			|			   PYC cond:c PYC exp:e2		{: RESULT = new AST("expFor", c, new AST("aux", null, e2)); :}
-			|		exp:e1 PYC cond:c PYC				{: RESULT = new AST("expFor", c, new AST("aux", e1, null)); :}
-			|			   PYC cond:c PYC				{: RESULT = new AST("expFor", c, new AST("aux", null, null)); :}		
+expFor		::=	exp:e1 PYC cond:c PYC exp:e2		{: RESULT = new AST("expFor", c, new AST("aux", e1, e2)); :}
+			|	exp:e1 PYC boolexp:b PYC exp:e2		{: RESULT = new AST("expFor", b, new AST("aux", e1, e2)); :}	
+			|	PYC cond:c PYC exp:e2				{: RESULT = new AST("expFor", c, new AST("aux", null, e2)); :}
+			|	exp:e1 PYC boolexp:b PYC			{: RESULT = new AST("expFor", b, new AST("aux", e1, null)); :}
+			|	exp:e1 PYC cond:c PYC				{: RESULT = new AST("expFor", c, new AST("aux", e1, null)); :}
+			|	  PYC cond:c PYC					{: RESULT = new AST("expFor", c, new AST("aux", null, null)); :}		
 			;
 
 exp			::=	NUM:n									{: RESULT = new AST("num", new AST(n, null, null), null ); :}
@@ -113,7 +116,7 @@ exp			::=	NUM:n									{: RESULT = new AST("num", new AST(n, null, null), null 
 
 cond		::=		exp:e1 IGUAL exp:e2					{: RESULT = new AST("igual", e1, e2); :}
 			|	exp:e1 DIF exp:e2						{: RESULT = new AST("distinto", e1, e2); :}
-			|	exp:e1 MENOR  exp:e2					{: RESULT = new AST("menor", e1, e2); :}
+			|	exp:e1 MENOR exp:e2						{: RESULT = new AST("menor", e1, e2); :}
 			|	exp:e1 MENORIGUAL exp:e2				{: RESULT = new AST("menorIgual", e1, e2); :}
 			|	exp:e1 MAYOR exp:e2						{: RESULT = new AST("mayor", e1, e2); :}
 			|	exp:e1 MAYORIGUAL exp:e2				{: RESULT = new AST("mayorIgual", e1, e2); :}
