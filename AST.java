@@ -450,12 +450,20 @@ public class AST {
 				break;
 			case "if":
 				izq.gc();
-				PLXC.out.println( izq.v + ":");
-				if (der != null){
-					der.v = izq.v;
-					der.f = izq.f;
-					der.gc();
-				}				
+				if(izq.raiz.equals("implica")){
+					if (der != null){
+						der.v = izq.v;
+						der.f = izq.f;
+						der.gc();
+					}
+				}else{
+					PLXC.out.println( izq.v + ":");
+					if (der != null){
+						der.v = izq.v;
+						der.f = izq.f;
+						der.gc();
+					}
+				}								
 				break;
 			case "igual":
 				left = izq.gc();
@@ -535,6 +543,18 @@ public class AST {
 				v = der.v;
 				f = der.f;
 				break;
+			case "implica":
+				izq.gc();
+				PLXC.out.println(izq.v + ":");
+				der.gc();
+				PLXC.out.println(der.v + ":");
+				PLXC.out.println("\tgoto " + izq.f + ";");
+				PLXC.out.println(izq.f + ":");
+				f = der.f;
+				v = der.v;
+				break;
+
+
 			case "not":
 				izq.gc();
 				v = izq.f;

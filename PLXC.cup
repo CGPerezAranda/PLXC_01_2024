@@ -16,7 +16,7 @@ parser code {:
 
 /* TERMINALES */
 terminal IF, AP, CP, AC, CC, ELSE, WHILE, DO, FOR, PYC, PRINT, DIF, IGUAL, LENGTH;
-terminal MAS, MENOS, DIV, POR, ASIG, MAYOR, MENOR, MENORIGUAL;
+terminal MAS, MENOS, DIV, POR, ASIG, MAYOR, MENOR, MENORIGUAL, IMPLICA;
 terminal MAYORIGUAL, NOT, ALL, CLL, AND, OR, COMA, CASTCHAR, CASTINT, CASTFLOAT;
 terminal INT, CHAR, FLOAT, STRING, BOOLEAN;
 terminal String IDENT, NUM, REAL, ASCII, CADENA, TRUE;
@@ -27,6 +27,7 @@ non terminal ini;
 non terminal AST listaSent, sent, exp, boolexp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
 
 /* PRECEDENCIAS */
+precedence right IMPLICA;
 precedence right ASIG;
 precedence right AND, OR;
 precedence right NOT;
@@ -65,6 +66,7 @@ boolexp     ::= IDENT:i								{: RESULT = new AST("bool", new AST(i, null, null
 	        |  	boolexp:b1 AND boolexp:b2			{: RESULT = new AST("and", b1, b2); :}
 			|  	boolexp:b1 OR boolexp:b2			{: RESULT = new AST("or", b1, b2); :}
 			|   NOT boolexp:b						{: RESULT = new AST("not", b, null); :}
+			|   boolexp:c1 IMPLICA boolexp:c2		{: RESULT = new AST("implica", c1, c2); :}
 			|   cond:c AND boolexp:b 				{: RESULT = new AST("and", c, b); :}
 			|   cond:c OR boolexp:b					{: RESULT = new AST("or", c, b); :}
 			|   boolexp:b AND cond:c 				{: RESULT = new AST("and", b, c); :}
@@ -122,6 +124,7 @@ cond		::=		exp:e1 IGUAL exp:e2					{: RESULT = new AST("igual", e1, e2); :}
 			|	exp:e1 MAYORIGUAL exp:e2				{: RESULT = new AST("mayorIgual", e1, e2); :}
 			| 	cond:c1 AND cond:c2						{: RESULT = new AST("and", c1, c2); :}
 			| 	cond:c1 OR cond:c2						{: RESULT = new AST("or", c1, c2); :}
+			|   cond:c1 IMPLICA cond:c2					{: RESULT = new AST("implica", c1, c2); :}
 			|	NOT cond:c								{: RESULT = new AST("not", c, null); :}
 			|	AP cond:c CP							{: RESULT = c; :}
 			;

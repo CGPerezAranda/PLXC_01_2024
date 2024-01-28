@@ -50,6 +50,7 @@ import java_cup.runtime.*;
     "(int)"             { return new Symbol(sym.CASTINT); }
     "(float)"           { return new Symbol(sym.CASTFLOAT); }
     ".length"           { return new Symbol(sym.LENGTH); }	
+    "-->"               { return new Symbol(sym.IMPLICA); }
     "true"|"false"      { return new Symbol(sym.TRUE, new String(yytext())); }
  
     
