@@ -17,7 +17,7 @@ parser code {:
 /* TERMINALES */
 terminal IF, AP, CP, AC, CC, ELSE, WHILE, DO, FOR, PYC, PRINT, DIF, IGUAL, LENGTH;
 terminal MAS, MENOS, DIV, POR, ASIG, MAYOR, MENOR, MENORIGUAL, IMPLICA;
-terminal MAYORIGUAL, NOT, ALL, CLL, AND, OR, COMA, CASTCHAR, CASTINT, CASTFLOAT;
+terminal MAYORIGUAL, NOT, ALL, CLL, AND, OR, COMA, CASTCHAR, CASTINT, CASTFLOAT, FORALL;
 terminal INT, CHAR, FLOAT, STRING, BOOLEAN;
 terminal String IDENT, NUM, REAL, ASCII, CADENA, TRUE;
 terminal MENOSUNARIO;
@@ -27,18 +27,22 @@ non terminal ini;
 non terminal AST listaSent, sent, exp, boolexp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
 
 /* PRECEDENCIAS */
+
 precedence right IMPLICA;
 precedence right ASIG;
-precedence right AND, OR;
-precedence right NOT;
+precedence left OR;
+precedence left AND;
 precedence left COMA;
+precedence right NOT; // Ensure NOT has higher precedence than AND
 precedence left IGUAL, MAYOR, MENOR, MAYORIGUAL, MENORIGUAL;
 precedence left MAS, MENOS;
 precedence left POR, DIV;
 precedence left AP, CP, AC, CC;
-precedence nonassoc MENOSUNARIO;
+precedence nonassoc MENOSUNARIO; // You might want to ensure this is correctly positioned in precedence if used for unary minus
 precedence left CASTCHAR, CASTINT, CASTFLOAT;
 precedence nonassoc IF, ELSE;
+
+
 
 /* REGLAS */
 
@@ -62,16 +66,22 @@ sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
 			|	FOR AP expFor:e CP sent:s			{: RESULT = new AST("for", e, s);  :} 	
 			;
 
-boolexp     ::= IDENT:i								{: RESULT = new AST("bool", new AST(i, null, null), null); :}
-	        |  	boolexp:b1 AND boolexp:b2			{: RESULT = new AST("and", b1, b2); :}
-			|  	boolexp:b1 OR boolexp:b2			{: RESULT = new AST("or", b1, b2); :}
-			|   NOT boolexp:b						{: RESULT = new AST("not", b, null); :}
-			|   boolexp:c1 IMPLICA boolexp:c2		{: RESULT = new AST("implica", c1, c2); :}
-			|   cond:c AND boolexp:b 				{: RESULT = new AST("and", c, b); :}
-			|   cond:c OR boolexp:b					{: RESULT = new AST("or", c, b); :}
-			|   boolexp:b AND cond:c 				{: RESULT = new AST("and", b, c); :}
-			|   boolexp:b OR cond:c					{: RESULT = new AST("or", b, c); :}
-			;
+			
+boolexp     ::= exp:e                             	{: RESULT = new AST("bool", e, null); :}
+            |   NOT exp:e                      		{: RESULT = new AST("not", new AST("bool", e, null), null); :}  %prec NOT
+		/*	|   NOT boolexp:b 						{: RESULT = new AST("not", b, null); :}  %prec NOT */
+			|   boolexp:b1 AND boolexp:b2           {: RESULT = new AST("and", b1, b2); :}
+            |   boolexp:b1 OR boolexp:b2            {: RESULT = new AST("or", b1, b2); :}
+            |   boolexp:c1 IMPLICA boolexp:c2       {: RESULT = new AST("implica", c1, c2); :}
+            |   cond:c AND boolexp:b                {: RESULT = new AST("and", c, b); :}
+            |   cond:c OR boolexp:b                 {: RESULT = new AST("or", c, b); :}
+            |   boolexp:b AND cond:c                {: RESULT = new AST("and", b, c); :}
+            |   boolexp:b OR cond:c                 {: RESULT = new AST("or", b, c); :}
+            |   FORALL IDENT:i COMA boolexp:b       {: RESULT = new AST("forall", new AST(i, null, null), b); :}
+            |   IDENT:i OR boolexp:b                {: RESULT = new AST("or", new AST("bool", new AST(i,null, null),null), b); :}
+            |   IDENT:i AND boolexp:b               {: RESULT = new AST("and", new AST("bool", new AST(i,null, null),null), b); :}
+            |   AP boolexp:b CP                     {: RESULT = b; :}
+            ;
 
 			
 			
@@ -125,7 +135,7 @@ cond		::=		exp:e1 IGUAL exp:e2					{: RESULT = new AST("igual", e1, e2); :}
 			| 	cond:c1 AND cond:c2						{: RESULT = new AST("and", c1, c2); :}
 			| 	cond:c1 OR cond:c2						{: RESULT = new AST("or", c1, c2); :}
 			|   cond:c1 IMPLICA cond:c2					{: RESULT = new AST("implica", c1, c2); :}
-			|	NOT cond:c								{: RESULT = new AST("not", c, null); :}
+			|	NOT cond:c								{: RESULT = new AST("not", c, null); :}   %prec NOT
 			|	AP cond:c CP							{: RESULT = c; :}
 			;
 listaEnteros::=	IDENT:i                             	{: RESULT = new AST("intIdent", null, new AST(i, null, null)); :}

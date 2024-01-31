@@ -6,10 +6,11 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
+  public static final int FORALL = 35;
   public static final int AC = 5;
-  public static final int CHAR = 36;
+  public static final int CHAR = 37;
   public static final int POR = 19;
-  public static final int INT = 35;
+  public static final int INT = 36;
   public static final int IMPLICA = 24;
   public static final int FOR = 10;
   public static final int CP = 4;
@@ -20,32 +21,32 @@ public class sym {
   public static final int CASTCHAR = 32;
   public static final int OR = 30;
   public static final int DIV = 18;
-  public static final int NUM = 41;
+  public static final int NUM = 42;
   public static final int CC = 6;
   public static final int IF = 2;
   public static final int MAYORIGUAL = 25;
-  public static final int BOOLEAN = 39;
+  public static final int BOOLEAN = 40;
   public static final int EOF = 0;
   public static final int ASIG = 20;
-  public static final int TRUE = 45;
+  public static final int TRUE = 46;
   public static final int error = 1;
   public static final int COMA = 31;
-  public static final int CADENA = 44;
+  public static final int CADENA = 45;
   public static final int DIF = 13;
   public static final int MENOS = 17;
   public static final int MENOR = 22;
-  public static final int IDENT = 40;
-  public static final int MENOSUNARIO = 46;
+  public static final int IDENT = 41;
+  public static final int MENOSUNARIO = 47;
   public static final int CLL = 28;
-  public static final int REAL = 42;
+  public static final int REAL = 43;
   public static final int MAYOR = 21;
   public static final int CASTINT = 33;
   public static final int ELSE = 7;
   public static final int WHILE = 8;
-  public static final int FLOAT = 37;
-  public static final int STRING = 38;
+  public static final int FLOAT = 38;
+  public static final int STRING = 39;
   public static final int ALL = 27;
-  public static final int ASCII = 43;
+  public static final int ASCII = 44;
   public static final int AP = 3;
   public static final int PRINT = 12;
   public static final int LENGTH = 15;
@@ -89,6 +90,7 @@ public class sym {
   "CASTCHAR",
   "CASTINT",
   "CASTFLOAT",
+  "FORALL",
   "INT",
   "CHAR",
   "FLOAT",

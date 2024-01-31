@@ -449,8 +449,8 @@ public class AST {
 				res += izq.raiz;
 				break;
 			case "if":
-				izq.gc();
-				if(izq.raiz.equals("implica")){
+				izq.gc();				
+				if(izq.raiz.equals("implica")||izq.raiz.equals("forall")){
 					if (der != null){
 						der.v = izq.v;
 						der.f = izq.f;
@@ -465,6 +465,23 @@ public class AST {
 					}
 				}								
 				break;
+			case "forall":
+				v = Generador.nuevaEtiqueta();
+				f = Generador.nuevaEtiqueta();
+				PLXC.out.println("\t" + izq.raiz + " = 0;");
+				PLXC.out.println(v + ":");
+				der.gc();
+				String derv, derf;
+				derv = der.v;
+				derf = der.f;
+				PLXC.out.println(derv + ":");
+				PLXC.out.println("\tif (1 == " + izq.raiz + ") goto " + f + ";");
+				PLXC.out.println("\t" + izq.raiz + " = 1;");
+				PLXC.out.println("\tgoto " + v + ";");
+				PLXC.out.println(f + ":");
+				v = derv;
+				f = derf;
+				break;
 			case "igual":
 				left = izq.gc();
 				right = der.gc();
@@ -475,6 +492,7 @@ public class AST {
 				break;
 			case "bool":
 				left = izq.gc();
+				//System.out.println("raiz izquierda; " + izq.raiz);
 				if (left == null || left.equals("")){
 					left = izq.raiz;
 				}				
@@ -553,8 +571,6 @@ public class AST {
 				f = der.f;
 				v = der.v;
 				break;
-
-
 			case "not":
 				izq.gc();
 				v = izq.f;
@@ -682,8 +698,8 @@ public class AST {
 				left = izq.raiz; // identificador
 				if (!(right.equals("true") || right.equals("false"))){ // condicion
 					right = der.gc();
-					et = Generador.getPastEtiqueta(); //et si se cumple la condición
-					et1 = Generador.getCurrentEtiqueta();	//et si no se cumple la condición
+					et = der.v; //et si se cumple la condición
+					et1 = der.f;	//et si no se cumple la condición
 					et2 = Generador.nuevaEtiqueta(); //et final y salida
 					PLXC.out.println(et + ":");//se cumple la condicion
 					PLXC.out.println("\t" + left + " = 1;");
