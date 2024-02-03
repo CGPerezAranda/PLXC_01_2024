@@ -587,7 +587,9 @@ public class AST {
 					der.v = Generador.nuevaEtiqueta();
 					der.f = Generador.nuevaEtiqueta();
 				}
-				PLXC.out.println(der.v + ":");
+				if(!der.raiz.equals("implica")){
+					PLXC.out.println(der.v + ":");
+				}
 				PLXC.out.println("\tgoto " + izq.f + ";");
 				PLXC.out.println(izq.f + ":");
 				f = der.f;
