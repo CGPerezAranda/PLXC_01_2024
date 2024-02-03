@@ -589,6 +589,10 @@ public class AST {
 				izq.gc();
 				v = izq.f;
 				f = izq.v;
+				if(v == null && f == null){ //Si no se ha asignado etiqueta
+					v = Generador.nuevaEtiqueta();
+					f = Generador.nuevaEtiqueta();
+				}
 				break;
 			case "mayor":
 				left = izq.gc();

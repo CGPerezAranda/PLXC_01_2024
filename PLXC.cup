@@ -69,7 +69,6 @@ sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
 			
 boolexp     ::= exp:e                             	{: RESULT = new AST("bool", e, null); :}
             |   NOT exp:e                      		{: RESULT = new AST("not", new AST("bool", e, null), null); :}  %prec NOT
-		/*	|   NOT boolexp:b 						{: RESULT = new AST("not", b, null); :}  %prec NOT */
 			|   boolexp:b1 AND boolexp:b2           {: RESULT = new AST("and", b1, b2); :}
             |   boolexp:b1 OR boolexp:b2            {: RESULT = new AST("or", b1, b2); :}
             |   boolexp:c1 IMPLICA boolexp:c2       {: RESULT = new AST("implica", c1, c2); :}
@@ -116,6 +115,7 @@ exp			::=	NUM:n									{: RESULT = new AST("num", new AST(n, null, null), null 
 			|	IDENT:i ASIG exp:e 						{: RESULT = new AST("asig", new AST(i, null, null), e); :}
 			|	IDENT:i ASIG TRUE:t						{: RESULT = new AST("asigBool", new AST(i, null, null), new AST(t, null, null)); :}	
 			|	IDENT:i ASIG cond:c						{: RESULT = new AST("asigBool", new AST(i, null, null), c); :}
+			|   IDENT:i ASIG NOT exp:e					{: RESULT = new AST("asigBool", new AST(i, null, null), new AST("not", e, null)); :}	
 			|	IDENT:i AC exp:e CC						{: RESULT = new AST("arrayPos", new AST(i, null, null), e); :}
 			|   IDENT:i AC NUM:n CC ASIG exp:e			{: RESULT = new AST("arrayAsig", new AST(i, new AST(n, null, null), null), e); :}
 			|	IDENT:i AC exp:e1 CC ASIG exp:e2		{: RESULT = new AST("arrayAsig", new AST(i, e1, null), e2); :}
