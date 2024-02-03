@@ -340,18 +340,33 @@ public class AST {
 			case "asig":
 				left = izq.raiz;
 				right = der.gc();
-				if (!TablaSimbolos.estaIdent(left)){
-					Errores.noDeclarada(left);
-				}
-				if (TablaSimbolos.tipo(left)!= TablaSimbolos.Tipo.BOOLEAN && TablaSimbolos.tipo(left) != TablaSimbolos.tipo(right) && !comprobarCasteo(left, der.raiz, right)){
-					Errores.noTipo(); //No hace la comprobación en caso de booleano
-				} else {
-					PLXC.out.println("\t" + left + " = " + right + ";");
-				} if (!der.raiz.equals("asig")){
-					res = right;
-				} else {
+				if(der.raiz.equals("asigBool")){
+					v = Generador.nuevaEtiqueta();
+					f = Generador.nuevaEtiqueta();
+					et = Generador.nuevaEtiqueta(); // etiqueta de salida
+					PLXC.out.println("\tif ( 1 == " + right + ") goto " + v + ";");
+					PLXC.out.println("\tgoto " + f + ";");
+					PLXC.out.println(v + ":");
+					PLXC.out.println("\t" + left + " = 1;");
+					PLXC.out.println("\tgoto " + et + ";");
+					PLXC.out.println(f + ":");
+					PLXC.out.println("\t" + left + " = 0;");
+					PLXC.out.println(et + ":");
 					res = left;
-				}				
+				}else{ 
+					if (!TablaSimbolos.estaIdent(left)){
+						Errores.noDeclarada(left);
+					}
+					if (TablaSimbolos.tipo(left) != TablaSimbolos.tipo(right) && !comprobarCasteo(left, der.raiz, right)){
+						Errores.noTipo(); //No hace la comprobación en caso de booleano
+					} else {
+						PLXC.out.println("\t" + left + " = " + right + ";");
+					} if (!der.raiz.equals("asig")){
+						res = right;
+					} else {
+						res = left;
+					}	
+				}			
 				break;
 			case "arrayAsig":
 				left = izq.gc(); //identificador
@@ -492,7 +507,6 @@ public class AST {
 				break;
 			case "bool":
 				left = izq.gc();
-				//System.out.println("raiz izquierda; " + izq.raiz);
 				if (left == null || left.equals("")){
 					left = izq.raiz;
 				}				
@@ -713,13 +727,9 @@ public class AST {
 				}else{
 					right = "0";
 					PLXC.out.println("\t" + left + " = " + right + ";");
-				}	
-				res = right;					
+				}
+				res = left;				
 				break;
-			case "asigBoolcond":
-				right = der.gc(); // condicion
-				left = izq.raiz; //identificador
-				PLXC.out.println("\tif (" + right + ") goto");
 			case "intIdent":
 				TablaSimbolos.insertar(der.raiz, TablaSimbolos.Tipo.INT);
 				if (izq != null){
@@ -879,6 +889,9 @@ public class AST {
 			result = true;
 		}else if(TablaSimbolos.tipo(left) == TablaSimbolos.Tipo.BOOLEAN){
 			result = true;
+			if(TablaSimbolos.tipo(derecha) == TablaSimbolos.Tipo.INT){
+				result = false;
+			}
 		}
 		return result;
 	}
