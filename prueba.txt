@@ -1,5 +1,5 @@
-boolean p,q;
-p = false;
-q = true;
-print(p || q);
-print(p && q);
+if (false --> true)
+    print(1);
+else 
+   print(2);
+print(3);

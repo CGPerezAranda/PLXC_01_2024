@@ -577,8 +577,16 @@ public class AST {
 				break;
 			case "implica":
 				izq.gc();
+				if (izq.raiz.equals("true") || izq.raiz.equals("false")){
+					izq.v = Generador.nuevaEtiqueta();
+					izq.f = Generador.nuevaEtiqueta();
+				}
 				PLXC.out.println(izq.v + ":");
 				der.gc();
+				if (der.raiz.equals("true") || der.raiz.equals("false")){
+					der.v = Generador.nuevaEtiqueta();
+					der.f = Generador.nuevaEtiqueta();
+				}
 				PLXC.out.println(der.v + ":");
 				PLXC.out.println("\tgoto " + izq.f + ";");
 				PLXC.out.println(izq.f + ":");

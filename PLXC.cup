@@ -81,6 +81,7 @@ boolexp     ::= exp:e                             	{: RESULT = new AST("bool", e
             |   IDENT:i OR boolexp:b                {: RESULT = new AST("or", new AST("bool", new AST(i,null, null),null), b); :}
             |   IDENT:i AND boolexp:b               {: RESULT = new AST("and", new AST("bool", new AST(i,null, null),null), b); :}
             |   AP boolexp:b CP                     {: RESULT = b; :}
+			|   TRUE:t1 IMPLICA TRUE:t2				{: RESULT = new AST("implica", new AST(t1, null, null), new AST(t2, null, null)); :}
             ;
 
 			
