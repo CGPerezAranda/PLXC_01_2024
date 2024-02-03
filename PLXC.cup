@@ -56,6 +56,7 @@ listaSent	::=	listaSent:e1 sent:e2				{: RESULT = new AST("sent", e1, e2); :}
 
 sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
 			|   PRINT AP cond:c CP PYC				{: RESULT = new AST("printcond", c, null); :}
+			|   PRINT AP boolexp:b CP PYC			{: RESULT = new AST("printcond", b, null); :}
 			|	PRINT AP ALL pArrayIni:a CLL CP PYC	{: RESULT = new AST("printArray", a ,null); :}
 			|	exp:e PYC							{: RESULT = e; :}
 			|	ALL listaSent:e CLL					{: RESULT = e; :}

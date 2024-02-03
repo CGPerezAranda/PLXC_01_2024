@@ -902,21 +902,3 @@ public class AST {
 
 }
 
-/*
-if ( 2 == 2 || 3 == 3 ) print (2*3);
-
-   if (2 == 2) goto L0;
-   goto L1;
-L1:
-   if (3 == 3) goto L2;
-   goto L3;
-L0:
-   goto L2;
-L2:
-   $0 = 2 * 3;
-   print $0;
-   goto L4;
-L3:
-L4:
-
-*/
