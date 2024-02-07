@@ -53,6 +53,9 @@ import java_cup.runtime.*;
     "-->"               { return new Symbol(sym.IMPLICA); }
     "true"|"false"      { return new Symbol(sym.TRUE, new String(yytext())); }
     "forall"            { return new Symbol(sym.FORALL); }
+    "from"              { return new Symbol(sym.FROM); }
+    "to"                { return new Symbol(sym.TO); }
+    "step"              { return new Symbol(sym.STEP); }
  
     
 

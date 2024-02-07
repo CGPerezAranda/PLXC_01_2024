@@ -1,9 +1,6 @@
-boolean p,q;
-if (p --> q --> q) {
-   print(1);
-   p = true;
-   if (p --> q --> q) {
-      print(2);
-   }
+int x,y;
+if (forall x from 1 to 10, forall y from 1 to 10, x*y > 0) {
+   print(9);
 }
+print(x); print(y);
 print(0);

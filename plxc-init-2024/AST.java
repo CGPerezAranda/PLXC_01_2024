@@ -489,33 +489,40 @@ public class AST {
 				String derv, derf;
 				derv = der.v;
 				derf = der.f;
-				PLXC.out.println(derv + ":");
+				if (!der.raiz.equals("forall")){
+					PLXC.out.println(derv + ":");
+				}
 				PLXC.out.println("\tif (1 == " + izq.raiz + ") goto " + f + ";");
 				PLXC.out.println("\t" + izq.raiz + " = 1;");
 				PLXC.out.println("\tgoto " + v + ";");
 				PLXC.out.println(f + ":");
 				v = derv;
-				f = derf;
+				f = derf;	
 				break;
-			case "forallInt":
-				left = izq.raiz; //identificador
-				String from, to;
-				from = izq.izq.gc(); //desde
-				to = izq.der.gc(); //hasta
+			case "forallint":
+				izq.gc();
+				v = izq.v;
+				f = izq.f;
+				break;
+			case "fromExp":
+				left = izq.raiz; //identificador de la variable
 				TablaSimbolos.insertar(left, TablaSimbolos.Tipo.INT);
+				String from, to;
+				from = izq.izq.gc(); //valor inicial
+				to = izq.der.gc(); //valor final
 				PLXC.out.println("\t" + left + " = " + from + ";");
-				et = Generador.nuevaEtiqueta();
+				et = Generador.nuevaEtiqueta(); // etiqueta inicial
 				PLXC.out.println(et + ":");
-				et1 = Generador.nuevaEtiqueta();
+				et1 = Generador.nuevaEtiqueta(); // etiqueta salida (verdadero)
 				PLXC.out.println("\tif (" + to + " < " + left + ") goto " + et1 + ";");
+				v = et1;
 				der.gc();
 				PLXC.out.println(der.v + ":");
 				PLXC.out.println("\t" + left + " = " + left + " + 1;");
 				PLXC.out.println("\tgoto " + et + ";");
-				v = et1;
 				f = der.f;
-				
 				break;
+			
 			case "igual":
 				left = izq.gc();
 				right = der.gc();
@@ -526,16 +533,21 @@ public class AST {
 				break;
 			case "bool":
 				left = izq.gc();
-				if (left == null || left.equals("")){
-					left = izq.raiz;
-				}				
-				if (!TablaSimbolos.estaIdent(left)){
-					TablaSimbolos.insertar(left, TablaSimbolos.Tipo.BOOLEAN);
-				}
-				v = Generador.nuevaEtiqueta();
-				f = Generador.nuevaEtiqueta();
-				PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
-				PLXC.out.println("\tgoto " + f + ";");				
+				if(!izq.raiz.equals( "bool")){
+					if (left == null || left.equals("")){
+						left = izq.raiz;
+					}				
+					if (!TablaSimbolos.estaIdent(left)){
+						TablaSimbolos.insertar(left, TablaSimbolos.Tipo.BOOLEAN);
+					}
+					v = Generador.nuevaEtiqueta();
+					f = Generador.nuevaEtiqueta();
+					PLXC.out.println("\tif ( 1 == " + left + ") goto " + v + ";");
+					PLXC.out.println("\tgoto " + f + ";");	
+				}else{
+					v = izq.v;
+					f = izq.f;
+				}		
 				break;
 			case "boolnot":
 				izq.gc();
@@ -579,11 +591,14 @@ public class AST {
 			case "and":
 				izq.gc();
 				PLXC.out.println(izq.v + ":");
+				if(der.raiz.equals("implica")){
+					Generador.guardaEtiqueta(izq.f);
+				}	
 				der.gc();
-				PLXC.out.println(izq.f + ":");
 				PLXC.out.println("\tgoto " + der.f + ";");
 				v = der.v;
-				f = der.f;
+				f = der.f;	
+										
 				break;
 			case "or":
 				izq.gc();
@@ -599,8 +614,13 @@ public class AST {
 				if (izq.raiz.equals("true") || izq.raiz.equals("false")){
 					izq.v = Generador.nuevaEtiqueta();
 					izq.f = Generador.nuevaEtiqueta();
+				}if(Generador.etiquetaGuardada()){
+					PLXC.out.println(Generador.getEtiquetaGuardada()+ ":");
+					PLXC.out.println("\tgoto " + izq.f + ";");
 				}
-				PLXC.out.println(izq.v + ":");
+				if(!izq.raiz.equals("forall")){
+					PLXC.out.println(izq.v + ":");
+				}
 				der.gc();
 				if (der.raiz.equals("true") || der.raiz.equals("false")){
 					der.v = Generador.nuevaEtiqueta();
@@ -610,9 +630,10 @@ public class AST {
 					PLXC.out.println(der.v + ":");
 				}
 				PLXC.out.println("\tgoto " + izq.f + ";");
+				
 				PLXC.out.println(izq.f + ":");
 				f = der.f;
-				v = der.v;
+				v = der.v;				
 				break;
 			case "not":
 				izq.gc();
