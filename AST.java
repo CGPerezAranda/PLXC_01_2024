@@ -513,8 +513,26 @@ public class AST {
 				PLXC.out.println("\t" + left + " = " + left + " + 1;");
 				PLXC.out.println("\tgoto " + et + ";");
 				v = et1;
-				f = der.f;
-				
+				f = der.f;				
+				break;
+			case "forallIntStep":
+				left = izq.raiz; //identificador
+				String from1, to1, step;
+				from1 = izq.izq.gc(); //desde
+				to1 = izq.der.gc(); //hasta
+				TablaSimbolos.insertar(left, TablaSimbolos.Tipo.INT);
+				PLXC.out.println("\t" + left + " = " + from1 + ";");
+				et = Generador.nuevaEtiqueta();
+				PLXC.out.println(et + ":");
+				et1 = Generador.nuevaEtiqueta();
+				PLXC.out.println("\tif (" + to1 + " < " + left + ") goto " + et1 + ";");
+				der.der.gc();
+				PLXC.out.println(der.der.v + ":");
+				step = der.izq.gc(); //step 
+				PLXC.out.println("\t" + left + " = " + left + " + " + step + ";");
+				PLXC.out.println("\tgoto " + et + ";");
+				v = et1;	
+				f = der.der.f;	
 				break;
 			case "igual":
 				left = izq.gc();

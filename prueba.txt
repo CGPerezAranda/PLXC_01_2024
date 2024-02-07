@@ -1,6 +1,8 @@
-int x,y;
-if (forall x from 1 to 10, forall y from 1 to 10, x*y > 0) {
-   print(9);
+int x;
+if (forall x from 0 to 10 step 2 , x-2*(x/2) == 0) {
+   print(1);
 }
-print(x); print(y);
+if (forall x from 0 to 10 step 3 , x-2*(x/2) == 0) {
+   print(2);
+}
 print(0);

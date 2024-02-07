@@ -82,6 +82,8 @@ boolexp     ::= exp:e                             	{: RESULT = new AST("bool", e
 					COMA cond:c 					{: RESULT = new AST("forallInt", new AST(i, e1, e2), c); :}
 			|   FORALL IDENT:i FROM exp:e1 TO exp:e2
 					COMA boolexp:b 					{: RESULT = new AST("forallInt", new AST(i, e1, e2), b); :}		
+			|	FORALL IDENT:i FROM exp:e1 TO exp:e2
+					STEP exp:e3 COMA cond:c 		{: RESULT = new AST("forallIntStep", new AST(i, e1, e2), new AST("step", e3, c)); :}		
 			|   IDENT:i OR boolexp:b                {: RESULT = new AST("or", new AST("bool", new AST(i,null, null),null), b); :}
             |   IDENT:i AND boolexp:b               {: RESULT = new AST("and", new AST("bool", new AST(i,null, null),null), b); :}
             |   AP boolexp:b CP                     {: RESULT = b; :}
