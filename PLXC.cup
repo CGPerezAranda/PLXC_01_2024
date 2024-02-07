@@ -24,23 +24,25 @@ terminal MENOSUNARIO;
 
 /* NOT TERMINALES */
 non terminal ini;
-non terminal AST listaSent, sent, exp, boolexp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
+non terminal AST listaSent, forAllExp, sent, exp, boolexp, cond, elseSent, expFor, listaEnteros, listaChar, listaReales, listaBool, arrayIni, pArrayIni, expString;
 
 /* PRECEDENCIAS */
 
 precedence right IMPLICA;
 precedence right ASIG;
-precedence left OR;
-precedence left AND;
 precedence left COMA;
+precedence nonassoc FORALL;
+precedence right FROM, TO, STEP;
+precedence left OR, AND;
 precedence right NOT; // Ensure NOT has higher precedence than AND
-precedence left IGUAL, MAYOR, MENOR, MAYORIGUAL, MENORIGUAL;
+precedence left IGUAL, MAYOR, MENOR, MAYORIGUAL, MENORIGUAL, DIF;
 precedence left MAS, MENOS;
 precedence left POR, DIV;
 precedence left AP, CP, AC, CC;
 precedence nonassoc MENOSUNARIO; // You might want to ensure this is correctly positioned in precedence if used for unary minus
 precedence left CASTCHAR, CASTINT, CASTFLOAT;
 precedence nonassoc IF, ELSE;
+
 
 
 
@@ -60,8 +62,9 @@ sent		::=		PRINT AP exp:e CP PYC			{: RESULT = new AST("print", e, null); :}
 			|	PRINT AP ALL pArrayIni:a CLL CP PYC	{: RESULT = new AST("printArray", a ,null); :}
 			|	exp:e PYC							{: RESULT = e; :}
 			|	ALL listaSent:e CLL					{: RESULT = e; :}
-			|	IF AP cond:c CP elseSent:e			{: RESULT = new AST("if", c, e); :}
 			|   IF AP boolexp:b CP elseSent:e 	 	{: RESULT = new AST("if", b, e); :}
+			|	IF AP cond:c CP elseSent:e			{: RESULT = new AST("if", c, e); :}
+			|   IF AP forAllExp:f CP elseSent:e		{: RESULT = new AST("if", f, e); :}
 			|	DO sent:s WHILE AP cond:c CP PYC	{: RESULT = new AST("doWhile",c,s); :}
 			|	WHILE AP cond:c CP sent:s			{: RESULT = new AST("while",c,s);  :}	
 			|	FOR AP expFor:e CP sent:s			{: RESULT = new AST("for", e, s);  :} 	
@@ -76,22 +79,23 @@ boolexp     ::= exp:e                             	{: RESULT = new AST("bool", e
             |   cond:c AND boolexp:b                {: RESULT = new AST("and", c, b); :}
             |   cond:c OR boolexp:b                 {: RESULT = new AST("or", c, b); :}
             |   boolexp:b AND cond:c                {: RESULT = new AST("and", b, c); :}
-            |   boolexp:b OR cond:c                 {: RESULT = new AST("or", b, c); :}
-            |   FORALL IDENT:i COMA boolexp:b       {: RESULT = new AST("forall", new AST(i, null, null), b); :}
-            |	FORALL IDENT:i FROM exp:e1 TO exp:e2
-					COMA cond:c 					{: RESULT = new AST("forallInt", new AST(i, e1, e2), c); :}
-			|   FORALL IDENT:i FROM exp:e1 TO exp:e2
-					COMA boolexp:b 					{: RESULT = new AST("forallInt", new AST(i, e1, e2), b); :}		
-			|	FORALL IDENT:i FROM exp:e1 TO exp:e2
-					STEP exp:e3 COMA cond:c 		{: RESULT = new AST("forallIntStep", new AST(i, e1, e2), new AST("step", e3, c)); :}		
+            |   boolexp:b OR cond:c                 {: RESULT = new AST("or", b, c); :}	
 			|   IDENT:i OR boolexp:b                {: RESULT = new AST("or", new AST("bool", new AST(i,null, null),null), b); :}
             |   IDENT:i AND boolexp:b               {: RESULT = new AST("and", new AST("bool", new AST(i,null, null),null), b); :}
             |   AP boolexp:b CP                     {: RESULT = b; :}
-			|   TRUE:t1 IMPLICA TRUE:t2				{: RESULT = new AST("implica", new AST(t1, null, null), new AST(t2, null, null)); :}
-            
+			|   TRUE:t1 IMPLICA TRUE:t2				{: RESULT = new AST("implica", new AST(t1, null, null), new AST(t2, null, null)); :}          
 			;
 
-			
+forAllExp	::= FORALL IDENT:i COMA boolexp:b       {: RESULT = new AST("forall", new AST(i, null, null), b); :}
+            |	FORALL IDENT:i FROM exp:e1 TO exp:e2
+					COMA cond:c 					{: RESULT = new AST("forallInt", new AST(i, e1, e2), c); :} 	%prec FORALL
+			|   FORALL IDENT:i FROM exp:e1 TO exp:e2
+					COMA boolexp:b 					{: RESULT = new AST("forallInt", new AST(i, e1, e2), b); :}		%prec FORALL
+			|	FORALL IDENT:i FROM exp:e1 TO exp:e2
+					STEP exp:e3 COMA cond:c 		{: RESULT = new AST("forallIntStep", new AST(i, e1, e2), new AST("step", e3, c)); :}	%prec FORALL
+			|   FORALL IDENT:i FROM exp:e1 TO exp:e2
+					 COMA forAllExp:f				{: RESULT = new AST("forallInt", new AST(i, e1, e2), f); :}	%prec FORALL		
+			;
 			
 elseSent	::=		sent:e1 ELSE sent:e2			{: RESULT = new AST("else", e1, e2); :}
 			|	sent:e								{: RESULT = new AST("else", e, null); :}
@@ -142,6 +146,7 @@ cond		::=		exp:e1 IGUAL exp:e2					{: RESULT = new AST("igual", e1, e2); :}
 			|	exp:e1 MAYOR exp:e2						{: RESULT = new AST("mayor", e1, e2); :}
 			|	exp:e1 MAYORIGUAL exp:e2				{: RESULT = new AST("mayorIgual", e1, e2); :}
 			| 	cond:c1 AND cond:c2						{: RESULT = new AST("and", c1, c2); :}
+			| 	cond:c AND forAllExp:f					{: RESULT = new AST("and", c, f); :}
 			| 	cond:c1 OR cond:c2						{: RESULT = new AST("or", c1, c2); :}
 			|   cond:c1 IMPLICA cond:c2					{: RESULT = new AST("implica", c1, c2); :}
 			|	NOT cond:c								{: RESULT = new AST("not", c, null); :}   %prec NOT
